@@ -1,11 +1,11 @@
 # Criar a VPC
-resource "aws_vpc" "hackaton_vpc" {
+resource "aws_vpc" "vpc" {
   cidr_block           = var.vpc_cidr
   enable_dns_support   = true
   enable_dns_hostnames = true
 
   tags = {
-    Name = "hackaton-vpc"
+    Name = "${var.project_name}-vpc"
   }
 }
 
@@ -13,13 +13,13 @@ resource "aws_vpc" "hackaton_vpc" {
 resource "aws_subnet" "private_subnets" {
   count = length(var.private_subnet_cidrs)
 
-  vpc_id                  = aws_vpc.hackaton_vpc.id
+  vpc_id                  = aws_vpc.vpc.id
   cidr_block              = var.private_subnet_cidrs[count.index]
   availability_zone       = var.availability_zones[count.index]
   map_public_ip_on_launch = false
 
   tags = {
-    Name = "hackaton-vpc-subnet-private${count.index + 1}-${var.availability_zones[count.index]}"
+    Name = "${var.project_name}-vpc-subnet-private${count.index + 1}-${var.availability_zones[count.index]}"
   }
 }
 
@@ -27,22 +27,22 @@ resource "aws_subnet" "private_subnets" {
 resource "aws_subnet" "public_subnets" {
   count = length(var.public_subnet_cidrs)
 
-  vpc_id                  = aws_vpc.hackaton_vpc.id
+  vpc_id                  = aws_vpc.vpc.id
   cidr_block              = var.public_subnet_cidrs[count.index]
   availability_zone       = var.availability_zones[count.index]
   map_public_ip_on_launch = true
 
   tags = {
-    Name = "hackaton-vpc-subnet-public${count.index + 1}-${var.availability_zones[count.index]}"
+    Name = "${var.project_name}-vpc-subnet-public${count.index + 1}-${var.availability_zones[count.index]}"
   }
 }
 
 # Criar um Internet Gateway para a VPC
 resource "aws_internet_gateway" "igw" {
-  vpc_id = aws_vpc.hackaton_vpc.id
+  vpc_id = aws_vpc.vpc.id
 
   tags = {
-    Name = "hackaton-vpc-igw"
+    Name = "${var.project_name}-vpc-igw"
   }
 }
 
@@ -58,13 +58,13 @@ resource "aws_nat_gateway" "nat_gw" {
   subnet_id     = aws_subnet.public_subnets[count.index].id
 
   tags = {
-    Name = "hackaton-vpc-nat-public${count.index + 1}-${var.availability_zones[count.index]}"
+    Name = "${var.project_name}-vpc-nat-public${count.index + 1}-${var.availability_zones[count.index]}"
   }
 }
 
 # Criar Tabela de Roteamento Pública
 resource "aws_route_table" "public" {
-  vpc_id = aws_vpc.hackaton_vpc.id
+  vpc_id = aws_vpc.vpc.id
 
   route {
     cidr_block = "0.0.0.0/0"
@@ -72,7 +72,7 @@ resource "aws_route_table" "public" {
   }
 
   tags = {
-    Name = "hackaton-vpc-rtb-public"
+    Name = "${var.project_name}-vpc-rtb-public"
   }
 }
 
@@ -87,7 +87,7 @@ resource "aws_route_table_association" "public_subnets" {
 # Criar Tabelas de Roteamento Privadas e associar aos NAT Gateways
 resource "aws_route_table" "private" {
   count  = length(var.private_subnet_cidrs)
-  vpc_id = aws_vpc.hackaton_vpc.id
+  vpc_id = aws_vpc.vpc.id
 
   route {
     cidr_block     = "0.0.0.0/0"
@@ -95,7 +95,7 @@ resource "aws_route_table" "private" {
   }
 
   tags = {
-    Name = "hackaton-vpc-rtb-private${count.index + 1}-${var.availability_zones[count.index]}"
+    Name = "${var.project_name}-vpc-rtb-private${count.index + 1}-${var.availability_zones[count.index]}"
   }
 }
 
@@ -108,13 +108,13 @@ resource "aws_route_table_association" "private_subnet_association" {
 }
 
 resource "aws_vpc_endpoint" "s3" {
-  vpc_id            = aws_vpc.hackaton_vpc.id
+  vpc_id            = aws_vpc.vpc.id
   service_name      = "com.amazonaws.${var.aws_region}.s3"
   vpc_endpoint_type = "Gateway"
 
   route_table_ids = aws_route_table.private[*].id # Associa às tabelas de rotas privadas
 
   tags = {
-    Name = "hackaton-vpce-s3"
+    Name = "${var.project_name}-vpce-s3"
   }
 }
