@@ -1,2 +1,4 @@
-aws_region = "us-east-1"
-project_name = "hackaton"
+aws_region = ""
+project_name = ""
+admin_user_email = ""
+admin_user_password = ""

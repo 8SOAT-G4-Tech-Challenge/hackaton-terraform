@@ -43,3 +43,12 @@ module "api" {
   private_subnet_ids = module.network.private_subnet_ids
   alb_listener_arn   = module.balancer.alb_listener_arn
 }
+
+module "cognito" {
+  source = "../../modules/cognito"
+
+  environment         = var.environment
+  project_name        = var.project_name
+  admin_user_email    = var.admin_user_email
+  admin_user_password = var.admin_user_password
+}

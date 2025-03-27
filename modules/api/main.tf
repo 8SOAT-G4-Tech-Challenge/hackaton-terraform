@@ -43,9 +43,9 @@ resource "aws_apigatewayv2_route" "route_file" {
 }
 
 # Criar stage
-resource "aws_apigatewayv2_stage" "stage" {
+resource "aws_apigatewayv2_stage" "api_gateway_stage" {
   api_id      = aws_apigatewayv2_api.api_gateway.id
-  name        = "$default"
+  name        = var.environment
   auto_deploy = true
 }
 

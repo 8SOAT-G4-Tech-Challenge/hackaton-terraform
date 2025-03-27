@@ -1,12 +1,6 @@
 variable "environment" {
   description = "Ambiente"
   type        = string
-  default     = "dev"
-}
-
-variable "aws_region" {
-  description = "Região da AWS"
-  type        = string
 }
 
 variable "project_name" {
@@ -14,10 +8,12 @@ variable "project_name" {
   type        = string
 }
 
+
 variable "admin_user_email" {
   description = "Email do admin"
   type        = string
 }
+
 
 variable "admin_user_password" {
   description = "Senha do admin"
