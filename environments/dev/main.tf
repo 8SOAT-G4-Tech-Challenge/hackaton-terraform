@@ -8,6 +8,7 @@ module "s3" {
 module "network" {
   source = "../../modules/network"
 
+  environment  = var.environment
   project_name = var.project_name
   aws_region   = var.aws_region
 }
@@ -15,6 +16,7 @@ module "network" {
 module "security" {
   source = "../../modules/security"
 
+  environment  = var.environment
   project_name = var.project_name
   aws_region   = var.aws_region
   vpc_id       = module.network.vpc_id
@@ -30,4 +32,14 @@ module "balancer" {
   vpc_id             = module.network.vpc_id
   alb_sg_id          = module.security.alb_sg_id
   private_subnet_ids = module.network.private_subnet_ids
+}
+
+module "api" {
+  source = "../../modules/api"
+
+  environment        = var.environment
+  project_name       = var.project_name
+  alb_sg_id          = module.security.alb_sg_id
+  private_subnet_ids = module.network.private_subnet_ids
+  alb_listener_arn   = module.balancer.alb_listener_arn
 }

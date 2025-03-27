@@ -1,6 +1,6 @@
 # Criação do security group do Application Load Balancer
 resource "aws_security_group" "alb_sg" {
-  name        = "${var.project_name}-alb-sg"
+  name        = "${var.environment}-${var.project_name}-alb-sg"
   description = "Security Group do Application Load Balancer"
   vpc_id      = var.vpc_id
 
@@ -19,13 +19,13 @@ resource "aws_security_group" "alb_sg" {
   }
 
   tags = {
-    Name = "${var.project_name}-alb-sg"
+    Name = "${var.environment}-${var.project_name}-alb-sg"
   }
 }
 
 # Criação do security group do EKS
 resource "aws_security_group" "eks_sg" {
-  name        = "${var.project_name}-eks-sg"
+  name        = "${var.environment}-${var.project_name}-eks-sg"
   description = "Security Group do EKS"
   vpc_id      = var.vpc_id
 
@@ -44,6 +44,6 @@ resource "aws_security_group" "eks_sg" {
   }
 
   tags = {
-    Name = "${var.project_name}-eks-sg"
+    Name = "${var.environment}-${var.project_name}-eks-sg"
   }
 }

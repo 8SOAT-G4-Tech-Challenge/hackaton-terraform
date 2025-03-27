@@ -5,7 +5,7 @@ resource "aws_vpc" "vpc" {
   enable_dns_hostnames = true
 
   tags = {
-    Name = "${var.project_name}-vpc"
+    Name = "${var.environment}-${var.project_name}-vpc"
   }
 }
 
@@ -19,7 +19,7 @@ resource "aws_subnet" "private_subnets" {
   map_public_ip_on_launch = false
 
   tags = {
-    Name = "${var.project_name}-vpc-subnet-private${count.index + 1}-${var.availability_zones[count.index]}"
+    Name = "${var.environment}-${var.project_name}-vpc-subnet-private${count.index + 1}-${var.availability_zones[count.index]}"
   }
 }
 
@@ -33,7 +33,7 @@ resource "aws_subnet" "public_subnets" {
   map_public_ip_on_launch = true
 
   tags = {
-    Name = "${var.project_name}-vpc-subnet-public${count.index + 1}-${var.availability_zones[count.index]}"
+    Name = "${var.environment}-${var.project_name}-vpc-subnet-public${count.index + 1}-${var.availability_zones[count.index]}"
   }
 }
 
@@ -42,7 +42,7 @@ resource "aws_internet_gateway" "igw" {
   vpc_id = aws_vpc.vpc.id
 
   tags = {
-    Name = "${var.project_name}-vpc-igw"
+    Name = "${var.environment}-${var.project_name}-vpc-igw"
   }
 }
 
@@ -58,7 +58,7 @@ resource "aws_nat_gateway" "nat_gw" {
   subnet_id     = aws_subnet.public_subnets[count.index].id
 
   tags = {
-    Name = "${var.project_name}-vpc-nat-public${count.index + 1}-${var.availability_zones[count.index]}"
+    Name = "${var.environment}-${var.project_name}-vpc-nat-public${count.index + 1}-${var.availability_zones[count.index]}"
   }
 }
 
@@ -72,7 +72,7 @@ resource "aws_route_table" "public" {
   }
 
   tags = {
-    Name = "${var.project_name}-vpc-rtb-public"
+    Name = "${var.environment}-${var.project_name}-vpc-rtb-public"
   }
 }
 
@@ -95,7 +95,7 @@ resource "aws_route_table" "private" {
   }
 
   tags = {
-    Name = "${var.project_name}-vpc-rtb-private${count.index + 1}-${var.availability_zones[count.index]}"
+    Name = "${var.environment}-${var.project_name}-vpc-rtb-private${count.index + 1}-${var.availability_zones[count.index]}"
   }
 }
 
@@ -115,6 +115,6 @@ resource "aws_vpc_endpoint" "s3" {
   route_table_ids = aws_route_table.private[*].id # Associa às tabelas de rotas privadas
 
   tags = {
-    Name = "${var.project_name}-vpce-s3"
+    Name = "${var.environment}-${var.project_name}-vpce-s3"
   }
 }
