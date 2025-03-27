@@ -1,4 +1,4 @@
-BUCKET_NAME="hackaton-g4-terraform-state"
+BUCKET_NAME="$1-hackaton-g4-terraform-state"
 REGION="us-east-1"
 
 # Verifica se o bucket S3 já existe
