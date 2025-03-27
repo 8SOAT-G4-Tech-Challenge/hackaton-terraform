@@ -1,3 +1,10 @@
+module "s3" {
+  source = "../../modules/s3"
+
+  environment  = var.environment
+  project_name = var.project_name
+}
+
 module "network" {
   source = "../../modules/network"
 
