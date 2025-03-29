@@ -7,6 +7,7 @@ resource "aws_eks_cluster" "eks_cluster" {
     subnet_ids              = var.private_subnet_ids
     security_group_ids      = [var.eks_sg_id]
     endpoint_private_access = true
+    # endpoint_public_access  = true
   }
 
   access_config {
@@ -14,7 +15,7 @@ resource "aws_eks_cluster" "eks_cluster" {
   }
 }
 
-#Criação do Launch Template
+# Criação do Launch Template
 resource "aws_launch_template" "launch_template" {
   name = "${var.environment}-${var.project_name}-launch-template"
 
@@ -29,11 +30,6 @@ resource "aws_launch_template" "launch_template" {
     capacity_reservation_preference = "open"
   }
 
-  cpu_options {
-    core_count       = 4
-    threads_per_core = 2
-  }
-
   credit_specification {
     cpu_credits = "standard"
   }
@@ -41,11 +37,7 @@ resource "aws_launch_template" "launch_template" {
   disable_api_stop        = true
   disable_api_termination = true
 
-  instance_market_options {
-    market_type = "spot"
-  }
-
-  instance_type = "t2.micro"
+  instance_type = "m5.large"
 
   # Não sei se precisa
   # vpc_security_group_ids = [var.eks_sg_id]
@@ -80,6 +72,11 @@ resource "aws_eks_node_group" "eks_node_group" {
 
   update_config {
     max_unavailable = 1
+  }
+
+  launch_template {
+    id      = aws_launch_template.launch_template.id
+    version = aws_launch_template.launch_template.latest_version
   }
 }
 

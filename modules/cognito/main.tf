@@ -11,6 +11,10 @@ resource "aws_cognito_user_pool" "cognito_user_pool" {
     attribute_data_type = "String"
     mutable             = false
     required            = true
+    string_attribute_constraints {
+      min_length = 0
+      max_length = 150
+    }
   }
 
   schema {
@@ -18,6 +22,10 @@ resource "aws_cognito_user_pool" "cognito_user_pool" {
     attribute_data_type = "String"
     mutable             = true
     required            = false
+    string_attribute_constraints {
+      min_length = 0
+      max_length = 13
+    }
   }
 
   password_policy {

@@ -1,5 +1,5 @@
-aws_region = ""
-project_name = ""
+aws_region = "us-east-1"
+project_name = "hackaton"
 admin_user_email = ""
 admin_user_password = ""
 aws_account_id = ""

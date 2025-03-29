@@ -52,7 +52,6 @@ module "cognito" {
   admin_user_password = var.admin_user_password
 }
 
-
 module "eks" {
   source = "../../modules/eks"
 
