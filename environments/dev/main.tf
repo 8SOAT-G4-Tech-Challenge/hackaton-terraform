@@ -22,7 +22,6 @@ module "security" {
   vpc_id       = module.network.vpc_id
 }
 
-
 module "balancer" {
   source = "../../modules/balancer"
 
@@ -51,4 +50,12 @@ module "cognito" {
   project_name        = var.project_name
   admin_user_email    = var.admin_user_email
   admin_user_password = var.admin_user_password
+}
+
+
+module "eks" {
+  source = "../../modules/eks"
+
+  environment  = var.environment
+  project_name = var.project_name
 }
