@@ -23,7 +23,7 @@ module "security" {
 }
 
 module "balancer" {
-  source = "../../modules/balancer"
+  source = "../../modules/load-balancer"
 
   environment        = var.environment
   project_name       = var.project_name
@@ -34,7 +34,7 @@ module "balancer" {
 }
 
 module "api" {
-  source = "../../modules/api"
+  source = "../../modules/api-gateway"
 
   environment        = var.environment
   project_name       = var.project_name
@@ -56,6 +56,9 @@ module "cognito" {
 module "eks" {
   source = "../../modules/eks"
 
-  environment  = var.environment
-  project_name = var.project_name
+  environment        = var.environment
+  project_name       = var.project_name
+  aws_account_id     = var.aws_account_id
+  eks_sg_id          = module.security.eks_sg_id
+  private_subnet_ids = module.network.private_subnet_ids
 }

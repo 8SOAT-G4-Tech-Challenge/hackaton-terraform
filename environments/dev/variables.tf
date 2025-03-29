@@ -24,3 +24,8 @@ variable "admin_user_password" {
   type        = string
 }
 
+variable "aws_account_id" {
+  description = "ID da conta da AWS"
+  type        = string
+}
+
