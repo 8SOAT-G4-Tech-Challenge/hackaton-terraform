@@ -1,5 +1,5 @@
 module "s3" {
-  source = "../../modules/s3"
+  source = "../../modules/storage"
 
   environment  = var.environment
   project_name = var.project_name
@@ -60,4 +60,16 @@ module "eks" {
   aws_account_id     = var.aws_account_id
   eks_sg_id          = module.security.eks_sg_id
   private_subnet_ids = module.network.private_subnet_ids
+}
+
+module "rds" {
+  source = "../../modules/rds/pg-converter"
+
+  environment           = var.environment
+  project_name          = var.project_name
+  rds_sg_id             = module.security.rds_sg_id
+  private_subnet_ids    = module.network.private_subnet_ids
+  pg_converter_database = var.pg_converter_database
+  pg_converter_username = var.pg_converter_username
+  pg_converter_password = var.pg_converter_password
 }
