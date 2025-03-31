@@ -14,14 +14,14 @@ resource "aws_db_subnet_group" "rds_subnet_group" {
   }
 }
 
-resource "aws_db_instance" "pg_converter" {
+resource "aws_db_instance" "pg_main" {
   allocated_storage    = 20
   engine               = "postgres"
   engine_version       = 16
   instance_class       = "db.t3.micro"
-  db_name              = var.pg_converter_database
-  username             = var.pg_converter_username
-  password             = var.pg_converter_password
+  db_name              = var.pg_main_database
+  username             = var.pg_main_username
+  password             = var.pg_main_password
   parameter_group_name = aws_db_parameter_group.postgres_params.name
   port                 = "5432"
   storage_type         = "gp2"

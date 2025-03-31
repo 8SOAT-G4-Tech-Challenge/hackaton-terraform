@@ -8,18 +8,18 @@ variable "project_name" {
   type        = string
 }
 
-variable "pg_converter_database" {
-  description = "Nome do banco de dados Postgres do MS - Converter"
+variable "pg_main_database" {
+  description = "Nome do banco de dados Postgres"
   type        = string
 }
 
-variable "pg_converter_username" {
-  description = "Nome do usuário do banco Postgres do MS - Converter"
+variable "pg_main_username" {
+  description = "Nome do usuário do banco Postgres"
   type        = string
 }
 
-variable "pg_converter_password" {
-  description = "Senha do banco Postgres do MS - Converter"
+variable "pg_main_password" {
+  description = "Senha do banco Postgres"
   type        = string
 }
 

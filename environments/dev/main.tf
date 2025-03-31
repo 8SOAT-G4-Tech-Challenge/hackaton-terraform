@@ -52,6 +52,18 @@ module "cognito" {
   admin_user_password = var.admin_user_password
 }
 
+module "rds" {
+  source = "../../modules/rds/pg-main"
+
+  environment        = var.environment
+  project_name       = var.project_name
+  rds_sg_id          = module.security.rds_sg_id
+  private_subnet_ids = module.network.private_subnet_ids
+  pg_main_database   = var.pg_main_database
+  pg_main_username   = var.pg_main_username
+  pg_main_password   = var.pg_main_password
+}
+
 module "eks" {
   source = "../../modules/eks"
 
@@ -62,14 +74,12 @@ module "eks" {
   private_subnet_ids = module.network.private_subnet_ids
 }
 
-module "rds" {
-  source = "../../modules/rds/pg-converter"
+module "ms_converter" {
+  source = "../../services/converter"
 
-  environment           = var.environment
-  project_name          = var.project_name
-  rds_sg_id             = module.security.rds_sg_id
-  private_subnet_ids    = module.network.private_subnet_ids
-  pg_converter_database = var.pg_converter_database
-  pg_converter_username = var.pg_converter_username
-  pg_converter_password = var.pg_converter_password
+  environment  = var.environment
+  project_name = var.project_name
+  api_url      = ""
+
+  depends_on = [module.rds]
 }
