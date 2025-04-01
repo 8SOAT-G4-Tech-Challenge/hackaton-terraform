@@ -1,34 +1,34 @@
 # Criação da namespace
-resource "kubernetes_namespace" "converter" {
+resource "kubernetes_namespace" "main" {
   metadata {
-    name = "${var.environment}-${var.project_name}-converter"
+    name = "${var.environment}-${var.project_name}-main"
   }
 }
 
 # Criação do config map
-resource "kubernetes_config_map" "converter_config_map" {
+resource "kubernetes_config_map" "main_config_map" {
   metadata {
-    name      = "${var.environment}-${var.project_name}-converter-config-map"
-    namespace = kubernetes_namespace.converter.metadata[0].name
+    name      = "${var.environment}-${var.project_name}-main-config-map"
+    namespace = kubernetes_namespace.main.metadata[0].name
     labels = {
-      name = "${var.environment}-${var.project_name}-converter-config-map"
+      name = "${var.environment}-${var.project_name}-main-config-map"
     }
   }
 
   data = {
-    API_PORT     = "3000"
-    DATABASE_URL = data.aws_db_instance.main_pg_url.endpoint
-    API_URL      = var.api_url
+    API_PORT          = "3000"
+    DATABASE_URL      = data.aws_db_instance.main_pg_url.endpoint
+    CONVERTER_API_URL = var.converter_api_url
   }
 }
 
 # Criação do service
-resource "kubernetes_service" "converter_service" {
+resource "kubernetes_service" "conerter_service" {
   metadata {
-    name      = "${var.environment}-${var.project_name}-converter-service"
-    namespace = kubernetes_namespace.converter.metadata[0].name
+    name      = "${var.environment}-${var.project_name}-main-service"
+    namespace = kubernetes_namespace.main.metadata[0].name
     labels = {
-      name = "${var.environment}-${var.project_name}-converter-service"
+      name = "${var.environment}-${var.project_name}-main-service"
     }
   }
 
@@ -36,7 +36,7 @@ resource "kubernetes_service" "converter_service" {
     type = "NodePort"
 
     selector = {
-      app = "${var.environment}-${var.project_name}-converter-api"
+      app = "${var.environment}-${var.project_name}-main-api"
     }
 
     port {
@@ -44,18 +44,18 @@ resource "kubernetes_service" "converter_service" {
       protocol    = "TCP"
       port        = 80
       target_port = 3000
-      node_port   = 33333 // Porta do Target Group
+      node_port   = 31300 // Porta do Target Group
     }
   }
 }
 
 # Criação do deployment
-resource "kubernetes_deployment" "converter_deployment" {
+resource "kubernetes_deployment" "main_deployment" {
   metadata {
-    name      = "${var.environment}-${var.project_name}-converter-deployment"
-    namespace = kubernetes_namespace.converter.metadata[0].name
+    name      = "${var.environment}-${var.project_name}-main-deployment"
+    namespace = kubernetes_namespace.main.metadata[0].name
     labels = {
-      name = "${var.environment}-${var.project_name}-converter-deployment"
+      name = "${var.environment}-${var.project_name}-main-deployment"
     }
   }
 
@@ -71,16 +71,16 @@ resource "kubernetes_deployment" "converter_deployment" {
 
     selector {
       match_labels = {
-        app = "${var.environment}-${var.project_name}-converter-api"
+        app = "${var.environment}-${var.project_name}-main-api"
       }
     }
 
     template {
       metadata {
-        name      = "${var.environment}-${var.project_name}-converter-api"
-        namespace = kubernetes_namespace.converter.metadata[0].name
+        name      = "${var.environment}-${var.project_name}-main-api"
+        namespace = kubernetes_namespace.main.metadata[0].name
         labels = {
-          app = "${var.environment}-${var.project_name}-converter-api"
+          app = "${var.environment}-${var.project_name}-main-api"
         }
       }
 
@@ -100,9 +100,9 @@ resource "kubernetes_deployment" "converter_deployment" {
         }
 
         container {
-          name = "${var.environment}-${var.project_name}-converter-api-container"
+          name = "${var.environment}-${var.project_name}-main-api-container"
           # TODO: Corrigir
-          # image             = "lucasaccurcio/hackaton-converter:latest"
+          # image             = "lucasaccurcio/hackaton-main:latest"
           image             = "lucasaccurcio/tech-challenge-order-api:latest"
           image_pull_policy = "Always"
 
@@ -112,13 +112,13 @@ resource "kubernetes_deployment" "converter_deployment" {
 
           env_from {
             config_map_ref {
-              name = "${var.environment}-${var.project_name}-converter-config-map"
+              name = "${var.environment}-${var.project_name}-main-config-map"
             }
           }
 
           liveness_probe {
             http_get {
-              path = "/converter/health"
+              path = "/main/health"
               port = 3000
             }
             initial_delay_seconds = 60
@@ -128,7 +128,7 @@ resource "kubernetes_deployment" "converter_deployment" {
 
           readiness_probe {
             http_get {
-              path = "/converter/health"
+              path = "/main/health"
               port = 3000
             }
             initial_delay_seconds = 10

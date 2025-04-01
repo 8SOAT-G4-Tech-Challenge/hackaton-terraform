@@ -79,7 +79,17 @@ module "ms_converter" {
 
   environment  = var.environment
   project_name = var.project_name
-  api_url      = ""
+  api_url      = "http://${var.environment}-${var.project_name}-main.${var.environment}-${var.project_name}-main-service.svc.cluster.local"
+
+  depends_on = [module.rds]
+}
+
+module "ms_api" {
+  source = "../../services/api"
+
+  environment       = var.environment
+  project_name      = var.project_name
+  converter_api_url = "http://${var.environment}-${var.project_name}-converter.${var.environment}-${var.project_name}-converter-service.svc.cluster.local"
 
   depends_on = [module.rds]
 }
