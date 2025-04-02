@@ -13,7 +13,14 @@ exports.handler = async (event) => {
 
 		return {
 			statusCode: 200,
-			body: JSON.stringify(response),
+			body: JSON.stringify({
+				username: response.Username,
+				email: response.UserAttributes.find((attr) => attr.Name === 'email')
+					.Value,
+				phoneNumber: response.UserAttributes.find(
+					(attr) => attr.Name === 'phone_number'
+				).Value,
+			}),
 		};
 	} catch (error) {
 		console.error('Error getting user:', error);

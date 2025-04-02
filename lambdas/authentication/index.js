@@ -3,13 +3,13 @@ const cognito = new AWS.CognitoIdentityServiceProvider({ region: 'us-east-1' });
 
 exports.handler = async (event) => {
 	try {
-		const { email, password } = JSON.parse(event.body);
+		const { username, password } = event;
 
 		const params = {
 			AuthFlow: 'USER_PASSWORD_AUTH',
 			ClientId: process.env.CLIENT_ID,
 			AuthParameters: {
-				USERNAME: email,
+				USERNAME: username,
 				PASSWORD: password,
 			},
 		};
@@ -32,18 +32,11 @@ exports.handler = async (event) => {
 
 		return {
 			statusCode: 200,
-			headers: {
-				'Content-Type': 'application/json',
-				'Access-Control-Allow-Origin': '*',
-			},
 			body: JSON.stringify({
-				message: 'Authentication successful',
-				tokens: {
-					accessToken: response.AuthenticationResult.AccessToken,
-					refreshToken: response.AuthenticationResult.RefreshToken,
-					idToken: response.AuthenticationResult.IdToken,
-					expiresIn: response.AuthenticationResult.ExpiresIn,
-				},
+				accessToken: response.AuthenticationResult.AccessToken,
+				refreshToken: response.AuthenticationResult.RefreshToken,
+				idToken: response.AuthenticationResult.IdToken,
+				expiresIn: response.AuthenticationResult.ExpiresIn,
 			}),
 		};
 	} catch (error) {

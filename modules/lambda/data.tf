@@ -22,6 +22,12 @@ data "archive_file" "auth_zip" {
 
 data "archive_file" "get_user_zip" {
   type        = "zip"
-  source_dir  = "../../lambdas/get-user-data" # Diretório do código da Lambda
-  output_path = "../../lambdas/get-user-data/lambda.zip"
+  source_dir  = "../../lambdas/get-user" # Diretório do código da Lambda
+  output_path = "../../lambdas/get-user/lambda.zip"
+}
+
+data "archive_file" "create_user_zip" {
+  type        = "zip"
+  source_dir  = "../../lambdas/create-user" # Diretório do código da Lambda
+  output_path = "../../lambdas/create-user/lambda.zip"
 }
