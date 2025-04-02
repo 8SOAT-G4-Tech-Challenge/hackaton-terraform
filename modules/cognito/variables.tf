@@ -20,3 +20,7 @@ variable "admin_user_password" {
   type        = string
 }
 
+variable "admin_phone_number" {
+  description = "Número de telefone do admin"
+  type        = string
+}

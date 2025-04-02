@@ -50,6 +50,7 @@ module "cognito" {
   project_name        = var.project_name
   admin_user_email    = var.admin_user_email
   admin_user_password = var.admin_user_password
+  admin_phone_number  = var.admin_phone_number
 }
 
 module "rds" {
@@ -92,4 +93,13 @@ module "ms_api" {
   converter_api_url = "http://${var.environment}-${var.project_name}-converter.${var.environment}-${var.project_name}-converter-service.svc.cluster.local"
 
   depends_on = [module.rds]
+}
+
+module "lambdas" {
+  source = "../../modules/lambda"
+
+  environment  = var.environment
+  project_name = var.project_name
+
+  depends_on = [module.cognito]
 }

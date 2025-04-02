@@ -36,3 +36,9 @@ override.tf.json
 .terraformrc
 terraform.rc
 .terraform.*
+
+
+# Ignore Lambdas
+.env
+**/node_modules
+*.zip

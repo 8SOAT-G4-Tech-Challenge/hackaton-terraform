@@ -1,0 +1,12 @@
+{
+	"name": "hackaton-authentication",
+	"version": "1.0.0",
+	"description": "Lambda function to authenticate users",
+	"main": "index.js",
+	"scripts": {
+		"build": "npm install && zip -r lambda.zip ."
+	},
+	"dependencies": {
+		"aws-sdk": "^2.1531.0"
+	}
+}

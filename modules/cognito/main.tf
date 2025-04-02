@@ -3,8 +3,8 @@ resource "aws_cognito_user_pool" "cognito_user_pool" {
   name = "${var.environment}-${var.project_name}-user-pool"
 
   # Caso queira confirmar email ou número de telefone
-  # auto_verified_attributes = ["email", "phone_number"]
-  mfa_configuration = "OFF"
+  auto_verified_attributes = []
+  mfa_configuration        = "OFF"
 
   schema {
     name                = "email"
@@ -21,10 +21,10 @@ resource "aws_cognito_user_pool" "cognito_user_pool" {
     name                = "phone_number"
     attribute_data_type = "String"
     mutable             = true
-    required            = false
+    required            = true
     string_attribute_constraints {
       min_length = 0
-      max_length = 13
+      max_length = 14
     }
   }
 
@@ -70,19 +70,19 @@ resource "aws_cognito_user_pool_domain" "subdomain" {
   user_pool_id = aws_cognito_user_pool.cognito_user_pool.id
 }
 
-# Criação do usuário Admin
-resource "aws_cognito_user" "admin_user" {
-  user_pool_id = aws_cognito_user_pool.cognito_user_pool.id
-  username     = var.admin_user_email
+# # Criação do usuário Admin
+# resource "aws_cognito_user" "admin_user" {
+#   user_pool_id = aws_cognito_user_pool.cognito_user_pool.id
+#   username     = var.admin_user_email
 
-  attributes = {
-    email          = var.admin_user_email
-    email_verified = "true"
-  }
+#   attributes = {
+#     email          = var.admin_user_email
+#     email_verified = "true"
+#     phone_number   = var.admin_phone_number
+#   }
 
-  password             = var.admin_user_password
-  force_alias_creation = true
-}
+#   password = var.admin_user_password
+# }
 
 # Criação do grupo de usuário Admin
 resource "aws_cognito_user_group" "admin_group" {
@@ -91,16 +91,20 @@ resource "aws_cognito_user_group" "admin_group" {
   description  = "Administrators group"
 }
 
-# Associar usuário Admin ao grupo Admin
-resource "aws_cognito_user_in_group" "admin_user_in_group" {
-  user_pool_id = aws_cognito_user_pool.cognito_user_pool.id
-  username     = aws_cognito_user.admin_user.username
-  group_name   = aws_cognito_user_group.admin_group.name
+# # Associar usuário Admin ao grupo Admin
+# resource "aws_cognito_user_in_group" "admin_user_in_group" {
+#   user_pool_id = aws_cognito_user_pool.cognito_user_pool.id
+#   username     = aws_cognito_user.admin_user.username
+#   group_name   = aws_cognito_user_group.admin_group.name
+# }
+
+# Criar secret para armazenar o client ID no Systems Manager
+resource "aws_secretsmanager_secret" "cognito_secret" {
+  name = "cognito-client-id"
 }
 
-# Armazenar o cognito client ID no Systems Manager
-resource "aws_ssm_parameter" "store_cognito_client_id" {
-  name  = "/${var.environment}/${var.project_name}/cognito/client-id"
-  type  = "String"
-  value = aws_cognito_user_pool_client.cognito_user_pool_client.id
+# Armazenar o client ID no Systems Manager
+resource "aws_secretsmanager_secret_version" "cognito_secret_version" {
+  secret_id     = aws_secretsmanager_secret.cognito_secret.id
+  secret_string = aws_cognito_user_pool_client.cognito_user_pool_client.id
 }

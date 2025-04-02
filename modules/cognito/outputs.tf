@@ -8,7 +8,7 @@ output "user_pool_arn" {
   description = "ARN do Cognito User Pool"
 }
 
-output "admin_client_id" {
+output "client_id" {
   value       = aws_cognito_user_pool_client.cognito_user_pool_client.id
   description = "ID do client para administradores"
 }
