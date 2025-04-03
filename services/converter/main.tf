@@ -44,7 +44,7 @@ resource "kubernetes_service" "converter_service" {
       protocol    = "TCP"
       port        = 80
       target_port = 3000
-      node_port   = 33333 // Porta do Target Group
+      node_port   = 31000
     }
   }
 }

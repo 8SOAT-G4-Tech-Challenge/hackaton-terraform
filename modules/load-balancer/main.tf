@@ -10,8 +10,8 @@ resource "aws_lb_target_group" "aws_alb_tg" {
     enabled             = true
     healthy_threshold   = 2
     interval            = 30
-    path                = "/health"
-    port                = 31300
+    path                = "/api/health"
+    port                = 31333
     matcher             = "200"
     protocol            = "HTTP"
     timeout             = 5
