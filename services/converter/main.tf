@@ -100,10 +100,8 @@ resource "kubernetes_deployment" "converter_deployment" {
         }
 
         container {
-          name = "${var.environment}-${var.project_name}-converter-api-container"
-          # TODO: Corrigir
-          # image             = "lucasaccurcio/hackaton-converter:latest"
-          image             = "lucasaccurcio/tech-challenge-order-api:latest"
+          name              = "${var.environment}-${var.project_name}-converter-api-container"
+          image             = "lucasaccurcio/hackaton-converter:latest"
           image_pull_policy = "Always"
 
           port {
