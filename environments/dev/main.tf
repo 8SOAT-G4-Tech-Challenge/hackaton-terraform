@@ -53,6 +53,22 @@ module "cognito" {
   admin_phone_number  = var.admin_phone_number
 }
 
+module "lambdas" {
+  source = "../../modules/lambda"
+
+  environment  = var.environment
+  project_name = var.project_name
+
+  depends_on = [module.cognito]
+}
+
+module "sqs" {
+  source = "../../modules/sqs"
+
+  environment  = var.environment
+  project_name = var.project_name
+}
+
 module "rds" {
   source = "../../modules/rds/pg-main"
 
@@ -78,11 +94,13 @@ module "eks" {
 module "ms_converter" {
   source = "../../services/converter"
 
-  environment  = var.environment
-  project_name = var.project_name
-  api_url      = "http://${var.environment}-${var.project_name}-main.${var.environment}-${var.project_name}-main-service.svc.cluster.local"
+  environment    = var.environment
+  project_name   = var.project_name
+  api_url        = "http://${var.environment}-${var.project_name}-main.${var.environment}-${var.project_name}-main-service.svc.cluster.local"
+  converter_port = var.converter_port
+  aws_region     = var.aws_region
 
-  depends_on = [module.rds]
+  depends_on = [module.rds, module.sqs]
 }
 
 module "ms_api" {
@@ -91,15 +109,9 @@ module "ms_api" {
   environment       = var.environment
   project_name      = var.project_name
   converter_api_url = "http://${var.environment}-${var.project_name}-converter.${var.environment}-${var.project_name}-converter-service.svc.cluster.local"
+  api_port          = var.api_port
 
-  depends_on = [module.rds]
+  depends_on = [module.rds, module.sqs]
 }
 
-module "lambdas" {
-  source = "../../modules/lambda"
 
-  environment  = var.environment
-  project_name = var.project_name
-
-  depends_on = [module.cognito]
-}

@@ -12,3 +12,8 @@ variable "converter_api_url" {
   description = "Endpoint do MS Converter"
   type        = string
 }
+
+variable "api_port" {
+  description = "Porta do MS Api"
+  type        = string
+}

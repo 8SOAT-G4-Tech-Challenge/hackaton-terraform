@@ -16,9 +16,11 @@ resource "kubernetes_config_map" "converter_config_map" {
   }
 
   data = {
-    API_PORT     = "3000"
-    DATABASE_URL = data.aws_db_instance.main_pg_url.endpoint
-    API_URL      = var.api_url
+    API_PORT              = var.converter_port
+    AWS_SQS_URL           = data.aws_sqs_queue.converter_queue.url
+    AWS_REGION            = var.aws_region
+    AWS_BUCKET            = data.aws_s3_bucket.bucket.bucket
+    HACKATON_API_BASE_URL = var.api_url
   }
 }
 
@@ -43,7 +45,7 @@ resource "kubernetes_service" "converter_service" {
       name        = "${var.environment}-${var.project_name}-api-port"
       protocol    = "TCP"
       port        = 80
-      target_port = 3000
+      target_port = var.converter_port
       node_port   = 31000
     }
   }
@@ -105,7 +107,7 @@ resource "kubernetes_deployment" "converter_deployment" {
           image_pull_policy = "Always"
 
           port {
-            container_port = 3000
+            container_port = var.converter_port
           }
 
           env_from {
@@ -117,7 +119,7 @@ resource "kubernetes_deployment" "converter_deployment" {
           liveness_probe {
             http_get {
               path = "/converter/health"
-              port = 3000
+              port = var.converter_port
             }
             initial_delay_seconds = 60
             period_seconds        = 10
@@ -127,7 +129,7 @@ resource "kubernetes_deployment" "converter_deployment" {
           readiness_probe {
             http_get {
               path = "/converter/health"
-              port = 3000
+              port = var.converter_port
             }
             initial_delay_seconds = 10
             period_seconds        = 10

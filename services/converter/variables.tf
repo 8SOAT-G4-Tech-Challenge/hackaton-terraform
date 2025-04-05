@@ -12,3 +12,13 @@ variable "api_url" {
   description = "Endpoint do MS Principal"
   type        = string
 }
+
+variable "converter_port" {
+  description = "Porta do MS Converter"
+  type        = string
+}
+
+variable "aws_region" {
+  description = "Região da AWS"
+  type        = string
+}

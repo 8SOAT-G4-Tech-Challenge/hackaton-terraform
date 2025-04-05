@@ -16,7 +16,7 @@ resource "kubernetes_config_map" "main_config_map" {
   }
 
   data = {
-    API_PORT          = "3333"
+    API_PORT          = var.api_port
     DATABASE_URL      = data.aws_db_instance.main_pg_url.endpoint
     CONVERTER_API_URL = var.converter_api_url
   }
@@ -43,7 +43,7 @@ resource "kubernetes_service" "conerter_service" {
       name        = "${var.environment}-${var.project_name}-api-port"
       protocol    = "TCP"
       port        = 80
-      target_port = 3333
+      target_port = var.api_port
       node_port   = 31333
     }
   }
@@ -107,7 +107,7 @@ resource "kubernetes_deployment" "main_deployment" {
           image_pull_policy = "Always"
 
           port {
-            container_port = 3333
+            container_port = var.api_port
           }
 
           env_from {
@@ -119,7 +119,7 @@ resource "kubernetes_deployment" "main_deployment" {
           liveness_probe {
             http_get {
               path = "/api/health"
-              port = 3333
+              port = var.api_port
             }
             initial_delay_seconds = 60
             period_seconds        = 10
@@ -129,7 +129,7 @@ resource "kubernetes_deployment" "main_deployment" {
           readiness_probe {
             http_get {
               path = "/api/health"
-              port = 3333
+              port = var.api_port
             }
             initial_delay_seconds = 10
             period_seconds        = 10

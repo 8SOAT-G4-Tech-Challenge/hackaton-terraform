@@ -48,3 +48,13 @@ variable "pg_main_password" {
   description = "Senha do banco Postgres"
   type        = string
 }
+
+variable "converter_port" {
+  description = "Porta do MS Converter"
+  type        = string
+}
+
+variable "api_port" {
+  description = "Porta do MS Api"
+  type        = string
+}
