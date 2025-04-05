@@ -7,9 +7,16 @@ resource "aws_cognito_user_pool" "cognito_user_pool" {
   mfa_configuration        = "OFF"
 
   schema {
+    name                = "id"
+    attribute_data_type = "String"
+    mutable             = true
+    required            = false
+  }
+
+  schema {
     name                = "email"
     attribute_data_type = "String"
-    mutable             = false
+    mutable             = true
     required            = true
     string_attribute_constraints {
       min_length = 0

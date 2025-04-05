@@ -1,8 +1,10 @@
 const AWS = require('aws-sdk');
 const cognito = new AWS.CognitoIdentityServiceProvider({ region: 'us-east-1' });
+const { v4: uuidv4 } = require('uuid');
 
 exports.handler = async (event) => {
 	try {
+		const userId = uuidv4();
 		const userPoolId = process.env.USER_POOL_ID;
 		const username = event.username;
 		const phoneNumber = event.phoneNumber;
@@ -18,6 +20,7 @@ exports.handler = async (event) => {
 					{ Name: 'email_verified', Value: 'true' },
 					{ Name: 'phone_number', Value: phoneNumber },
 					{ Name: 'phone_number_verified', Value: 'true' },
+					{ Name: 'custom:id', Value: userId },
 				],
 				TemporaryPassword: tempPassword,
 				MessageAction: 'SUPPRESS',

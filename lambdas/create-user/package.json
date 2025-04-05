@@ -7,6 +7,7 @@
 		"build": "npm install && zip -r lambda.zip ."
 	},
 	"dependencies": {
-		"aws-sdk": "^2.1531.0"
+		"aws-sdk": "^2.1531.0",
+		"uuid": "^11.1.0"
 	}
 }

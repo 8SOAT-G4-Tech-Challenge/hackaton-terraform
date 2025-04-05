@@ -15,6 +15,7 @@ exports.handler = async (event) => {
 			statusCode: 200,
 			body: JSON.stringify({
 				username: response.Username,
+				id: response.UserAttributes.find((attr) => attr.Name === 'id').Value,
 				email: response.UserAttributes.find((attr) => attr.Name === 'email')
 					.Value,
 				phoneNumber: response.UserAttributes.find(
