@@ -7,7 +7,8 @@ resource "aws_eks_cluster" "eks_cluster" {
     subnet_ids              = var.private_subnet_ids
     security_group_ids      = [var.eks_sg_id]
     endpoint_private_access = true
-    # endpoint_public_access  = true
+    endpoint_public_access  = true
+    public_access_cidrs     = ["0.0.0.0/0"]
   }
 
   access_config {
@@ -44,7 +45,7 @@ resource "aws_launch_template" "launch_template" {
   network_interfaces {
     security_groups = [var.eks_sg_id]
     # Não sei se precisa
-    # associate_public_ip_address = true
+    associate_public_ip_address = true
   }
 
   tag_specifications {

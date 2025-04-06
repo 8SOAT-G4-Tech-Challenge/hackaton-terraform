@@ -53,6 +53,15 @@ resource "aws_security_group" "eks_sg" {
     cidr_blocks = ["0.0.0.0/0"]
   }
 
+  ingress {
+    description = "Porta Kubelet"
+    from_port   = 10250
+    to_port     = 10250
+    protocol    = "tcp"
+    # NÃO deve existir em um caso REAL
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
   egress {
     from_port   = 0
     to_port     = 0
