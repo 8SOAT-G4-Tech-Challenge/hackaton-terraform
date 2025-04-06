@@ -19,6 +19,7 @@ else
   echo "Bucket S3 '$BUCKET_NAME' já existe."
 fi
 
+
 # Executa o terraform init
 echo "Iniciando o Terraform..."
 terraform init
