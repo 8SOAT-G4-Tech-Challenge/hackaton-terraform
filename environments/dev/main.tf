@@ -69,13 +69,13 @@ module "sqs" {
 module "rds" {
   source = "../../modules/rds/pg-main"
 
-  environment        = var.environment
-  project_name       = var.project_name
-  rds_sg_id          = module.security.rds_sg_id
-  private_subnet_ids = module.network.private_subnet_ids
-  pg_main_database   = var.pg_main_database
-  pg_main_username   = var.pg_main_username
-  pg_main_password   = var.pg_main_password
+  environment       = var.environment
+  project_name      = var.project_name
+  rds_sg_id         = module.security.rds_sg_id
+  public_subnet_ids = module.network.public_subnet_ids
+  pg_main_database  = var.pg_main_database
+  pg_main_username  = var.pg_main_username
+  pg_main_password  = var.pg_main_password
 }
 
 module "eks" {
@@ -103,15 +103,19 @@ module "ms_converter" {
   depends_on = [module.rds, module.sqs]
 }
 
-# module "ms_api" {
-#   source = "../../services/api"
+module "ms_api" {
+  source = "../../services/api"
 
-#   environment       = var.environment
-#   project_name      = var.project_name
-#   converter_api_url = "http://${var.environment}-${var.project_name}-converter.${var.environment}-${var.project_name}-converter-service.svc.cluster.local"
-#   api_port          = var.api_port
+  environment           = var.environment
+  project_name          = var.project_name
+  converter_api_url     = "http://${var.environment}-${var.project_name}-converter.${var.environment}-${var.project_name}-converter-service.svc.cluster.local"
+  api_port              = var.api_port
+  aws_region            = var.aws_region
+  aws_access_key_id     = var.aws_access_key_id
+  aws_secret_access_key = var.aws_secret_access_key
+  aws_session_token     = var.aws_session_token
 
-#   depends_on = [module.rds, module.sqs]
-# }
+  depends_on = [module.rds, module.sqs]
+}
 
 

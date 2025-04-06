@@ -28,7 +28,7 @@ variable "rds_sg_id" {
   type        = string
 }
 
-variable "private_subnet_ids" {
-  description = "IDs das subnets privadas"
+variable "public_subnet_ids" {
+  description = "IDs das subnets públicas"
   type        = list(string)
 }

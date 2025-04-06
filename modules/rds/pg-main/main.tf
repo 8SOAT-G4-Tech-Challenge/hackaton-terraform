@@ -7,7 +7,7 @@ resource "aws_db_parameter_group" "postgres_params" {
 # Criação do parameter group
 resource "aws_db_subnet_group" "rds_subnet_group" {
   name       = "${var.environment}-${var.project_name}-subnet-group"
-  subnet_ids = var.private_subnet_ids
+  subnet_ids = var.public_subnet_ids
 
   tags = {
     Name = "Private RDS Subnet Group"
@@ -31,7 +31,7 @@ resource "aws_db_instance" "pg_main" {
   identifier             = "${var.environment}-${var.project_name}-postgres"
   vpc_security_group_ids = [var.rds_sg_id]
   db_subnet_group_name   = aws_db_subnet_group.rds_subnet_group.name
-  publicly_accessible    = false
+  publicly_accessible    = true
 
   tags = {
     Name = "${var.environment}-${var.project_name}-postgres"

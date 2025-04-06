@@ -16,9 +16,15 @@ resource "kubernetes_config_map" "main_config_map" {
   }
 
   data = {
-    API_PORT          = var.api_port
-    DATABASE_URL      = data.aws_db_instance.main_pg_url.endpoint
-    CONVERTER_API_URL = var.converter_api_url
+    API_PORT              = var.api_port
+    DATABASE_URL          = data.aws_db_instance.main_pg_url.endpoint
+    AWS_REGION            = var.aws_region
+    AWS_BUCKET            = data.aws_s3_bucket.bucket.bucket
+    AWS_AUTH_LAMBDA       = data.aws_lambda_function.auth_lambda.function_name
+    AWS_ACCESS_KEY_ID     = var.aws_access_key_id
+    AWS_SECRET_ACCESS_KEY = var.aws_secret_access_key
+    AWS_SESSION_TOKEN     = var.aws_session_token
+    AWS_SQS_URL           = data.aws_sqs_queue.converter_queue.url
   }
 }
 
@@ -100,10 +106,8 @@ resource "kubernetes_deployment" "main_deployment" {
         }
 
         container {
-          name = "${var.environment}-${var.project_name}-main-api-container"
-          # TODO: Corrigir
-          # image             = "lucasaccurcio/hackaton-main:latest"
-          image             = "lucasaccurcio/tech-challenge-order-api:latest"
+          name              = "${var.environment}-${var.project_name}-main-api-container"
+          image             = "lucasaccurcio/hackaton-api:latest"
           image_pull_policy = "Always"
 
           port {
