@@ -81,33 +81,12 @@ resource "aws_cognito_user_pool_domain" "subdomain" {
   user_pool_id = aws_cognito_user_pool.cognito_user_pool.id
 }
 
-# # Criação do usuário Admin
-# resource "aws_cognito_user" "admin_user" {
-#   user_pool_id = aws_cognito_user_pool.cognito_user_pool.id
-#   username     = var.admin_user_email
-
-#   attributes = {
-#     email          = var.admin_user_email
-#     email_verified = "true"
-#     phone_number   = var.admin_phone_number
-#   }
-
-#   password = var.admin_user_password
-# }
-
 # Criação do grupo de usuário Admin
 resource "aws_cognito_user_group" "admin_group" {
   user_pool_id = aws_cognito_user_pool.cognito_user_pool.id
   name         = "admin"
   description  = "Administrators group"
 }
-
-# # Associar usuário Admin ao grupo Admin
-# resource "aws_cognito_user_in_group" "admin_user_in_group" {
-#   user_pool_id = aws_cognito_user_pool.cognito_user_pool.id
-#   username     = aws_cognito_user.admin_user.username
-#   group_name   = aws_cognito_user_group.admin_group.name
-# }
 
 # Criar secret para armazenar o client ID no Systems Manager
 resource "aws_secretsmanager_secret" "cognito_secret" {

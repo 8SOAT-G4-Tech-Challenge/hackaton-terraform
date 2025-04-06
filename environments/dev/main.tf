@@ -46,11 +46,8 @@ module "api" {
 module "cognito" {
   source = "../../modules/cognito"
 
-  environment         = var.environment
-  project_name        = var.project_name
-  admin_user_email    = var.admin_user_email
-  admin_user_password = var.admin_user_password
-  admin_phone_number  = var.admin_phone_number
+  environment  = var.environment
+  project_name = var.project_name
 }
 
 module "lambdas" {

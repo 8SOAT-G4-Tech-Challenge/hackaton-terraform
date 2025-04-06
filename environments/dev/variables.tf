@@ -14,21 +14,6 @@ variable "project_name" {
   type        = string
 }
 
-variable "admin_user_email" {
-  description = "Email do admin"
-  type        = string
-}
-
-variable "admin_user_password" {
-  description = "Senha do admin"
-  type        = string
-}
-
-variable "admin_phone_number" {
-  description = "Número do telefone do admin"
-  type        = string
-}
-
 variable "aws_account_id" {
   description = "ID da conta da AWS"
   type        = string
