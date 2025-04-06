@@ -3,7 +3,7 @@ const cognito = new AWS.CognitoIdentityServiceProvider({ region: 'us-east-1' });
 
 exports.handler = async (event) => {
 	try {
-		const { username, password } = event;
+		const { username, password } = JSON.parse(event.body);
 
 		const params = {
 			AuthFlow: 'USER_PASSWORD_AUTH',

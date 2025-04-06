@@ -8,6 +8,11 @@ variable "project_name" {
   type        = string
 }
 
+variable "aws_region" {
+  description = "Região da AWS dentro do módulo"
+  type        = string
+}
+
 variable "alb_sg_id" {
   description = "ID do Security Group do Load Balancer"
   type        = string

@@ -4,11 +4,13 @@ const { v4: uuidv4 } = require('uuid');
 
 exports.handler = async (event) => {
 	try {
+		const body = JSON.parse(event.body);
+
 		const userId = uuidv4();
 		const userPoolId = process.env.USER_POOL_ID;
-		const username = event.username;
-		const phoneNumber = event.phoneNumber;
-		const email = event.email;
+		const username = body.username;
+		const phoneNumber = body.phoneNumber;
+		const email = body.email;
 		const tempPassword = 'TempPass123!';
 
 		await cognito
@@ -31,7 +33,7 @@ exports.handler = async (event) => {
 			.adminSetUserPassword({
 				UserPoolId: userPoolId,
 				Username: username,
-				Password: event.password,
+				Password: body.password,
 				Permanent: true,
 			})
 			.promise();

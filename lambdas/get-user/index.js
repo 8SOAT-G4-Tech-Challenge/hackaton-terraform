@@ -1,28 +1,17 @@
-const AWS = require('aws-sdk');
-const cognito = new AWS.CognitoIdentityServiceProvider({ region: 'us-east-1' });
-
 exports.handler = async (event) => {
 	try {
-		const accessToken = event.accessToken;
+		const claims = event.requestContext.authorizer.jwt.claims;
 
-		const response = await cognito
-			.getUser({
-				AccessToken: accessToken,
-			})
-			.promise();
+		const response = {
+			username: claims['cognito:username'],
+			id: claims['custom:id'],
+			email: claims.email,
+			phoneNumber: claims.phone_number,
+		};
 
 		return {
 			statusCode: 200,
-			body: JSON.stringify({
-				username: response.Username,
-				id: response.UserAttributes.find((attr) => attr.Name === 'custom:id')
-					.Value,
-				email: response.UserAttributes.find((attr) => attr.Name === 'email')
-					.Value,
-				phoneNumber: response.UserAttributes.find(
-					(attr) => attr.Name === 'phone_number'
-				).Value,
-			}),
+			body: JSON.stringify(response),
 		};
 	} catch (error) {
 		console.error('Error getting user:', error);
