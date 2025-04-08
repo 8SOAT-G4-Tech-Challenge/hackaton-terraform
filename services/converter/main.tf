@@ -27,33 +27,6 @@ resource "kubernetes_config_map" "converter_config_map" {
   }
 }
 
-# Criação do service
-resource "kubernetes_service" "converter_service" {
-  metadata {
-    name      = "${var.environment}-${var.project_name}-converter-service"
-    namespace = kubernetes_namespace.converter.metadata[0].name
-    labels = {
-      name = "${var.environment}-${var.project_name}-converter-service"
-    }
-  }
-
-  spec {
-    type = "NodePort"
-
-    selector = {
-      app = "${var.environment}-${var.project_name}-converter-api"
-    }
-
-    port {
-      name        = "${var.environment}-${var.project_name}-api-port"
-      protocol    = "TCP"
-      port        = 80
-      target_port = var.converter_port
-      node_port   = 31000
-    }
-  }
-}
-
 # Criação do deployment
 resource "kubernetes_deployment" "converter_deployment" {
   metadata {
@@ -158,4 +131,34 @@ resource "kubernetes_deployment" "converter_deployment" {
       }
     }
   }
+}
+
+
+# Criação do service
+resource "kubernetes_service" "converter_service" {
+  metadata {
+    name      = "${var.environment}-${var.project_name}-converter-service"
+    namespace = kubernetes_namespace.converter.metadata[0].name
+    labels = {
+      name = "${var.environment}-${var.project_name}-converter-service"
+    }
+  }
+
+  spec {
+    type = "NodePort"
+
+    selector = {
+      app = "${var.environment}-${var.project_name}-converter-api"
+    }
+
+    port {
+      name        = "${var.environment}-${var.project_name}-api-port"
+      protocol    = "TCP"
+      port        = 80
+      target_port = var.converter_port
+      node_port   = 31000
+    }
+  }
+
+  depends_on = [kubernetes_deployment.converter_deployment]
 }

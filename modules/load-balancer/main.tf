@@ -1,16 +1,16 @@
 # Criação do Target Group do Application Load Balancer
 resource "aws_lb_target_group" "aws_alb_tg" {
   name        = "${var.environment}-${var.project_name}-alb-tg"
-  port        = 80
+  port        = 31333
   protocol    = "HTTP"
+  target_type = "instance"
   vpc_id      = var.vpc_id
-  target_type = "ip"
 
   health_check {
     enabled             = true
     healthy_threshold   = 2
     interval            = 30
-    path                = "/api/health"
+    path                = "/files/health"
     port                = 31333
     matcher             = "200"
     protocol            = "HTTP"
@@ -42,4 +42,28 @@ resource "aws_lb_listener" "alb_listener" {
     type             = "forward"
     target_group_arn = aws_lb_target_group.aws_alb_tg.arn
   }
+}
+
+# Redirecionar rotas /files ao target group correto
+resource "aws_lb_listener_rule" "file_rule" {
+  listener_arn = aws_lb_listener.alb_listener.arn
+  priority     = 10
+
+  action {
+    type             = "forward"
+    target_group_arn = aws_lb_target_group.aws_alb_tg.arn
+  }
+
+  condition {
+    path_pattern {
+      values = ["/files/*"]
+    }
+  }
+}
+
+# Conectar target group ao node correto
+resource "aws_lb_target_group_attachment" "files_tg_attachment" {
+  target_group_arn = aws_lb_target_group.aws_alb_tg.arn
+  target_id        = data.aws_instances.ec2.id
+  port             = 31333
 }

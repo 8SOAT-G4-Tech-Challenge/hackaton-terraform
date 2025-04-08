@@ -4,7 +4,7 @@ exports.handler = async (event) => {
 
 		const response = {
 			username: claims['cognito:username'],
-			id: claims['custom:id'],
+			id: claims['sub'],
 			email: claims.email,
 			phoneNumber: claims.phone_number,
 		};

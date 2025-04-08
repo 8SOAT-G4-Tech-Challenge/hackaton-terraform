@@ -128,6 +128,14 @@ resource "aws_apigatewayv2_route" "get_user" {
   authorization_type = "JWT"
 }
 
+# Criação da rota de download de arquivos
+resource "aws_apigatewayv2_route" "download_file" {
+  api_id    = aws_apigatewayv2_api.api_gateway.id
+  route_key = "GET /files/download/{proxy+}"
+
+  target = "integrations/${aws_apigatewayv2_integration.alb_integration.id}"
+}
+
 # TODO: Adicionar rota
 # Criação da rota xxx integrada ao Load Balancer
 resource "aws_apigatewayv2_route" "route_file" {

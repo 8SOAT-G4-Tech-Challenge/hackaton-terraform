@@ -43,8 +43,7 @@ resource "aws_launch_template" "launch_template" {
   # Não sei se precisa
   # vpc_security_group_ids = [var.eks_sg_id]
   network_interfaces {
-    security_groups = [var.eks_sg_id]
-    # Não sei se precisa
+    security_groups             = [var.eks_sg_id]
     associate_public_ip_address = true
   }
 

@@ -22,7 +22,6 @@ exports.handler = async (event) => {
 					{ Name: 'email_verified', Value: 'true' },
 					{ Name: 'phone_number', Value: phoneNumber },
 					{ Name: 'phone_number_verified', Value: 'true' },
-					{ Name: 'custom:id', Value: userId },
 				],
 				TemporaryPassword: tempPassword,
 				MessageAction: 'SUPPRESS',

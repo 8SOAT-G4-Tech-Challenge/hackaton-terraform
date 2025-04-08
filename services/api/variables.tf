@@ -37,3 +37,23 @@ variable "aws_session_token" {
   description = "Secret AWS"
   type        = string
 }
+
+variable "vpc_id" {
+  description = "ID da VPC"
+  type        = string
+}
+
+variable "pg_main_database" {
+  description = "Nome do banco de dados Postgres"
+  type        = string
+}
+
+variable "pg_main_username" {
+  description = "Nome do usuário do banco Postgres"
+  type        = string
+}
+
+variable "pg_main_password" {
+  description = "Senha do banco Postgres"
+  type        = string
+}
