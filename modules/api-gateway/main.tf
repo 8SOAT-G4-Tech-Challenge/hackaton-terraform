@@ -47,104 +47,6 @@ resource "aws_apigatewayv2_authorizer" "cognito" {
   }
 }
 
-# Adicionar trigger a lambda de criação de usuário
-resource "aws_lambda_permission" "create_user" {
-  statement_id  = "AllowAPIGatewayInvoke"
-  action        = "lambda:InvokeFunction"
-  function_name = data.aws_lambda_function.create_user.function_name
-  principal     = "apigateway.amazonaws.com"
-  source_arn    = "${aws_apigatewayv2_api.api_gateway.execution_arn}/*/*"
-}
-
-# Criação da integração com a lambda de criação de usuário
-resource "aws_apigatewayv2_integration" "create_user" {
-  api_id           = aws_apigatewayv2_api.api_gateway.id
-  integration_type = "AWS_PROXY"
-
-  integration_uri        = data.aws_lambda_function.create_user.invoke_arn
-  integration_method     = "POST"
-  payload_format_version = "2.0"
-}
-
-# Criação da rota de criação de usuário integrada a Lambda
-resource "aws_apigatewayv2_route" "create_user" {
-  api_id    = aws_apigatewayv2_api.api_gateway.id
-  route_key = "POST /user"
-  target    = "integrations/${aws_apigatewayv2_integration.create_user.id}"
-}
-
-# Adicionar trigger a lambda de criação de autenticação
-resource "aws_lambda_permission" "auth" {
-  statement_id  = "AllowAPIGatewayInvoke"
-  action        = "lambda:InvokeFunction"
-  function_name = data.aws_lambda_function.authentication.function_name
-  principal     = "apigateway.amazonaws.com"
-  source_arn    = "${aws_apigatewayv2_api.api_gateway.execution_arn}/*/*"
-}
-
-# Criação da integração com a lambda de autenticação
-resource "aws_apigatewayv2_integration" "auth" {
-  api_id           = aws_apigatewayv2_api.api_gateway.id
-  integration_type = "AWS_PROXY"
-
-  integration_uri        = data.aws_lambda_function.authentication.invoke_arn
-  integration_method     = "POST"
-  payload_format_version = "2.0"
-}
-
-# Criação da rota de autenticação integrada a Lambda
-resource "aws_apigatewayv2_route" "auth" {
-  api_id    = aws_apigatewayv2_api.api_gateway.id
-  route_key = "POST /auth"
-  target    = "integrations/${aws_apigatewayv2_integration.auth.id}"
-}
-
-# Adicionar trigger a lambda de pegar info do usuário
-resource "aws_lambda_permission" "get_user" {
-  statement_id  = "AllowAPIGatewayInvoke"
-  action        = "lambda:InvokeFunction"
-  function_name = data.aws_lambda_function.get_user.function_name
-  principal     = "apigateway.amazonaws.com"
-  source_arn    = "${aws_apigatewayv2_api.api_gateway.execution_arn}/*/*"
-}
-
-# Criação da integração com a lambda de pegar info do usuário
-resource "aws_apigatewayv2_integration" "get_user" {
-  api_id           = aws_apigatewayv2_api.api_gateway.id
-  integration_type = "AWS_PROXY"
-
-  integration_uri        = data.aws_lambda_function.get_user.invoke_arn
-  integration_method     = "POST"
-  payload_format_version = "2.0"
-}
-
-# Criação da rota de pegar info do usuário integrada a Lambda
-resource "aws_apigatewayv2_route" "get_user" {
-  api_id    = aws_apigatewayv2_api.api_gateway.id
-  route_key = "GET /user-data"
-
-  target             = "integrations/${aws_apigatewayv2_integration.get_user.id}"
-  authorizer_id      = aws_apigatewayv2_authorizer.cognito.id
-  authorization_type = "JWT"
-}
-
-# Criação da rota de download de arquivos
-resource "aws_apigatewayv2_route" "download_file" {
-  api_id    = aws_apigatewayv2_api.api_gateway.id
-  route_key = "GET /files/download/{proxy+}"
-
-  target = "integrations/${aws_apigatewayv2_integration.alb_integration.id}"
-}
-
-# TODO: Adicionar rota
-# Criação da rota xxx integrada ao Load Balancer
-resource "aws_apigatewayv2_route" "route_file" {
-  api_id    = aws_apigatewayv2_api.api_gateway.id
-  route_key = "ANY /file/{proxy+}"
-
-  target = "integrations/${aws_apigatewayv2_integration.alb_integration.id}"
-}
-
 # Criar stage
 resource "aws_apigatewayv2_stage" "api_gateway_stage" {
   api_id      = aws_apigatewayv2_api.api_gateway.id
@@ -152,3 +54,12 @@ resource "aws_apigatewayv2_stage" "api_gateway_stage" {
   auto_deploy = true
 }
 
+# Rotas de criação de usuários
+module "routes" {
+  source = "./routes"
+
+  api_id             = aws_apigatewayv2_api.api_gateway.id
+  authorizer_id      = aws_apigatewayv2_authorizer.cognito.id
+  alb_integration_id = aws_apigatewayv2_integration.alb_integration.id
+  api_gateway_arn    = aws_apigatewayv2_api.api_gateway.execution_arn
+}

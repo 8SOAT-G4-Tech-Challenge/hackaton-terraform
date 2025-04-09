@@ -27,3 +27,4 @@ variable "alb_listener_arn" {
   description = "ARN do Listener HTTP do Load Balancer"
   type        = string
 }
+
