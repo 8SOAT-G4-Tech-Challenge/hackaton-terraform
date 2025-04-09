@@ -1,6 +1,6 @@
-data "aws_instances" "ec2" {
+data "aws_instance" "ec2" {
   filter {
-    name   = "tag:eks:nodegroup-name"
-    values = ["${var.environment}-${var.project_name}-node-group"]
+    name   = "tag:Name"
+    values = ["${var.environment}-${var.project_name}-eks-node-instance"]
   }
 }

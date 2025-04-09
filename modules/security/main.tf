@@ -30,7 +30,7 @@ resource "aws_security_group" "eks_sg" {
   vpc_id      = var.vpc_id
 
   ingress {
-    description = "HTTP"
+    description = "Porta HTTP"
     from_port   = 80
     to_port     = 80
     protocol    = "tcp"
@@ -38,17 +38,9 @@ resource "aws_security_group" "eks_sg" {
   }
 
   ingress {
-    description = "HTTPS"
+    description = "Porta HTTPS"
     from_port   = 443
     to_port     = 443
-    protocol    = "tcp"
-    cidr_blocks = ["0.0.0.0/0"]
-  }
-
-  ingress {
-    description = "Port Hackaton Converter to Hackaton Api"
-    from_port   = 31300
-    to_port     = 31300
     protocol    = "tcp"
     cidr_blocks = ["0.0.0.0/0"]
   }
@@ -65,23 +57,6 @@ resource "aws_security_group" "eks_sg" {
     description = "Node Port Hackaton API"
     from_port   = 31333
     to_port     = 31333
-    protocol    = "tcp"
-    cidr_blocks = ["0.0.0.0/0"]
-  }
-
-  // Chute
-  ingress {
-    description = "Port Hackaton Converter to Hackaton Api"
-    from_port   = 3333
-    to_port     = 3333
-    protocol    = "tcp"
-    cidr_blocks = ["0.0.0.0/0"]
-  }
-
-  ingress {
-    description = "Port Hackaton Converter to Hackaton Api"
-    from_port   = 31300
-    to_port     = 31300
     protocol    = "tcp"
     cidr_blocks = ["0.0.0.0/0"]
   }
