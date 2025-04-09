@@ -8,11 +8,6 @@ variable "project_name" {
   type        = string
 }
 
-variable "converter_api_url" {
-  description = "Endpoint do MS Converter"
-  type        = string
-}
-
 variable "api_port" {
   description = "Porta do MS Api"
   type        = string
@@ -55,5 +50,10 @@ variable "pg_main_username" {
 
 variable "pg_main_password" {
   description = "Senha do banco Postgres"
+  type        = string
+}
+
+variable "api_gateway_url" {
+  description = "URL de invocação do api gateway"
   type        = string
 }

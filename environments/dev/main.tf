@@ -72,14 +72,14 @@ module "ms_converter" {
 
   environment           = var.environment
   project_name          = var.project_name
-  api_url               = "http://${var.environment}-${var.project_name}-main.${var.environment}-${var.project_name}-main-service.svc.cluster.local/files"
+  api_url               = "http://${var.environment}-${var.project_name}-main-service.${var.environment}-${var.project_name}-main.svc.cluster.local"
   converter_port        = var.converter_port
   aws_region            = var.aws_region
   aws_access_key_id     = var.aws_access_key_id
   aws_secret_access_key = var.aws_secret_access_key
   aws_session_token     = var.aws_session_token
 
-  depends_on = [module.rds, module.sqs]
+  depends_on = [module.rds, module.sqs, module.eks]
 }
 
 module "ms_api" {
@@ -87,7 +87,6 @@ module "ms_api" {
 
   environment           = var.environment
   project_name          = var.project_name
-  converter_api_url     = "http://${var.environment}-${var.project_name}-converter.${var.environment}-${var.project_name}-converter-service.svc.cluster.local"
   api_port              = var.api_port
   aws_region            = var.aws_region
   aws_access_key_id     = var.aws_access_key_id
@@ -97,8 +96,9 @@ module "ms_api" {
   pg_main_database      = var.pg_main_database
   pg_main_username      = var.pg_main_username
   pg_main_password      = var.pg_main_password
+  api_gateway_url       = module.api.api_gateway_stage_url
 
-  depends_on = [module.rds, module.sqs]
+  depends_on = [module.rds, module.sqs, module.eks]
 }
 
 module "balancer" {

@@ -1,6 +1,5 @@
-1- Preencha as variáveis de ambiente
-2- Acesse a pasta environments/dev e rode o comando `./terraform-init.sh init`
-3- Rode os comandos: `terraform apply -target=module.vpc -target=module.security -target=module.eks.aws_eks_cluster.eks_cluster -auto-approve`
-3.1- Rode os comandos `terraform apply -target=module.eks.aws_eks_access_entry.eks_access_entry -target=module.eks.aws_eks_access_policy_association.policy_association`
-4- Rode os comandos: `terraform apply -target=module.eks.aws_eks_node_group.eks_node_group -auto-approve`
-5- Rode os comandos: `terraform apply -auto-approve`
+1- Preencha as variáveis de ambiente<br />
+2- Acesse a pasta environments/dev e rode o comando `./terraform-init.sh init`<br />
+3- Rode os comandos: `terraform apply -auto-approve`<br />
+4- Entre no repositório hackaton-api, altere as variáveis de ambiente e rode `npx prisma migrate deploy` para criar as tabelas do banco de dados.
+5- Entre na AWS e cadastre seu TELEFONE em Simple Notification Service -> Mobile/Text messaging (SMS)<br />

@@ -21,11 +21,41 @@ resource "kubernetes_config_map" "main_config_map" {
     AWS_REGION            = var.aws_region
     AWS_BUCKET            = data.aws_s3_bucket.bucket.bucket
     AWS_SQS_URL           = data.aws_sqs_queue.converter_queue.url
+    AWS_API_URL           = var.api_gateway_url
     USER_POOL_ID          = data.aws_cognito_user_pools.user_pools.ids[0]
     AWS_ACCESS_KEY_ID     = var.aws_access_key_id
     AWS_SECRET_ACCESS_KEY = var.aws_secret_access_key
     AWS_SESSION_TOKEN     = var.aws_session_token
   }
+}
+
+# Criação do service
+resource "kubernetes_service" "conerter_service" {
+  metadata {
+    name      = "${var.environment}-${var.project_name}-main-service"
+    namespace = kubernetes_namespace.main.metadata[0].name
+    labels = {
+      name = "${var.environment}-${var.project_name}-main-service"
+    }
+  }
+
+  spec {
+    type = "NodePort"
+
+    selector = {
+      app = "${var.environment}-${var.project_name}-main-api"
+    }
+
+    port {
+      name        = "${var.environment}-${var.project_name}-api-port"
+      protocol    = "TCP"
+      port        = 80
+      target_port = var.api_port
+      node_port   = 31333
+    }
+  }
+
+  depends_on = [kubernetes_deployment.main_deployment]
 }
 
 # Criação do deployment
@@ -132,34 +162,4 @@ resource "kubernetes_deployment" "main_deployment" {
       }
     }
   }
-}
-
-
-# Criação do service
-resource "kubernetes_service" "conerter_service" {
-  metadata {
-    name      = "${var.environment}-${var.project_name}-main-service"
-    namespace = kubernetes_namespace.main.metadata[0].name
-    labels = {
-      name = "${var.environment}-${var.project_name}-main-service"
-    }
-  }
-
-  spec {
-    type = "NodePort"
-
-    selector = {
-      app = "${var.environment}-${var.project_name}-main-api"
-    }
-
-    port {
-      name        = "${var.environment}-${var.project_name}-api-port"
-      protocol    = "TCP"
-      port        = 80
-      target_port = var.api_port
-      node_port   = 31333
-    }
-  }
-
-  depends_on = [kubernetes_deployment.main_deployment]
 }
