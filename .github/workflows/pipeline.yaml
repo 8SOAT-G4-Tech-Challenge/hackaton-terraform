@@ -1,0 +1,101 @@
+name: 'CI - Infrastructure'
+
+on:
+  workflow_dispatch:
+    inputs:
+      deployType:
+        description: 'Deploy type'
+        type: choice
+        options:
+          - deploy
+          - destroy
+        required: true
+
+permissions:
+  id-token: write
+  contents: read
+
+jobs:
+  terraform_deploy:
+    name: 'Run Terraform deploy'
+    runs-on: ubuntu-latest
+    if: ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.deployType == 'deploy' }}
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup terraform
+        uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: '1.1.7'
+
+      - name: Configure AWS credencials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-session-token: ${{ secrets.AWS_SESSION_TOKEN }}
+          aws-region: ${{ vars.AWS_REGION }}
+
+      - name: Set Terraform env vars
+        run: |
+          echo "TF_VAR_aws_region=${{ vars.AWS_REGION }}" >> $GITHUB_ENV
+          echo "TF_VAR_project_name=${{ vars.PROJECT_NAME }}" >> $GITHUB_ENV
+          echo "TF_VAR_aws_account_id=${{ vars.AWS_ACCOUNT_ID }}" >> $GITHUB_ENV
+          echo "TF_VAR_pg_main_database=${{ vars.PG_MAIN_DATABASE }}" >> $GITHUB_ENV
+          echo "TF_VAR_pg_main_username=${{ secrets.PG_MAIN_USERNAME }}" >> $GITHUB_ENV
+          echo "TF_VAR_pg_main_password=${{ secrets.PG_MAIN_PASSWORD }}" >> $GITHUB_ENV
+          echo "TF_VAR_converter_port=${{ vars.CONVERTER_PORT }}" >> $GITHUB_ENV
+          echo "TF_VAR_api_port=${{ vars.API_PORT }}" >> $GITHUB_ENV
+          echo "TF_VAR_aws_access_key_id=${{ secrets.AWS_ACCESS_KEY_ID }}" >> $GITHUB_ENV
+          echo "TF_VAR_aws_secret_access_key=${{ secrets.AWS_SECRET_ACCESS_KEY }}" >> $GITHUB_ENV
+          echo "TF_VAR_aws_session_token=${{ secrets.AWS_SESSION_TOKEN }}" >> $GITHUB_ENV
+
+      - name: Terraform pré-init infrastructure
+        run: |
+          cd environments/dev && ./terraform_init.sh
+
+      - name: Terraform validate infrastructure
+        run: |
+          terraform validate
+
+      - name: Terraform Plan infrastructure
+        id: terraform-plan
+        run: |
+          terraform plan
+
+      - name: Terraform Apply infrastructure
+        id: terraform-apply
+        run: |
+          terraform apply -auto-approve
+
+  terraform_destroy:
+    name: 'Run Terraform destroy'
+    runs-on: ubuntu-latest
+    if: ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.deployType == 'destroy' }}
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup terraform
+        uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: '1.1.7'
+
+      - name: Configure AWS credencials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-session-token: ${{ secrets.AWS_SESSION_TOKEN }}
+          aws-region: ${{ vars.aws_region }}
+
+      - name: Terraform init infrastructure
+        run: |
+          terraform init
+
+      - name: Terraform destroy infra
+        run: |
+          terraform destroy -auto-approve"
