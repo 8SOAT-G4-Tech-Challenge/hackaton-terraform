@@ -54,7 +54,7 @@ jobs:
 
       - name: Terraform pré-init infrastructure
         run: |
-          cd environments/dev && ./terraform_init.sh
+          cd environments/dev && ./terraform_init.sh init
 
       - name: Terraform validate infrastructure
         run: |
