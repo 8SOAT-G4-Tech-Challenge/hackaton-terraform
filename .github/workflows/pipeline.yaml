@@ -54,21 +54,25 @@ jobs:
 
       - name: Terraform pré-init infrastructure
         run: |
-          cd environments/dev && ./terraform_init.sh init
+          ./terraform_init.sh init
+        working-directory: environments/dev
 
       - name: Terraform validate infrastructure
         run: |
           terraform validate
+        working-directory: environments/dev
 
       - name: Terraform Plan infrastructure
         id: terraform-plan
         run: |
           terraform plan
+        working-directory: environments/dev
 
       - name: Terraform Apply infrastructure
         id: terraform-apply
         run: |
           terraform apply -auto-approve
+        working-directory: environments/dev
 
   terraform_destroy:
     name: 'Run Terraform destroy'
