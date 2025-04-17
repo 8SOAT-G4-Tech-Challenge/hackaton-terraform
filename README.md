@@ -12,11 +12,11 @@ Este repositório contém todo o mapeamento utilizando a ferramenta terraform pa
 
 ## Execução
 
-Para realizar a execução local ou Git Actions siga a seguinte documentação [Execução do serviço](./docs/RUN_CONFIGURATION.md) 
+Para realizar a execução local ou via Git Actions siga a seguinte documentação [Execução do serviço](./docs/RUN_CONFIGURATION.md) 
 
 ## Arquitetura do Sistema
 
-Para saber mais detalhes sobre a arquitetura do sistema que esse serviço faz parte acesse a documentação [Arquitetura do Sistema](./docs/SYSTEM_ARCHITECTURE.md)
+Para saber mais detalhes sobre a arquitetura do sistema que esse serviço faz parte acesse a documentação [Arquitetura do Sistema](https://github.com/8SOAT-G4-Tech-Challenge/hackaton-api/blob/master/docs/SYSTEM_ARCHITECTURE.md)
 
 ## Participantes
 
