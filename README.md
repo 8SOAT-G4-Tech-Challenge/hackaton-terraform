@@ -12,7 +12,7 @@ Este repositório contém todo o mapeamento utilizando a ferramenta terraform pa
 
 ## Execução
 
-Para realizar a execução local ou via Git Actions siga a seguinte documentação [Execução do serviço](./docs/RUN_CONFIGURATION.md) 
+Para realizar a execução local ou via Git Actions siga a seguinte documentação [Execução](./docs/RUN_CONFIGURATION.md) 
 
 ## Arquitetura do Sistema
 
